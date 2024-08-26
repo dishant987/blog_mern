@@ -7,7 +7,7 @@ import router from "./router/route.js";
 import connect from "./database/conn.js";
 
 const app = express();
-
+config();
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
@@ -22,10 +22,8 @@ app.use(cors(corsOptions));
 const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 // app.use(express.static("public"))
-
-config();
 
 connect()
   .then(() => {
@@ -35,11 +33,9 @@ connect()
   })
   .catch((error) => {
     console.error("Error connecting to the database:", error);
-   
+
     process.exit(1);
   });
-
-  
 
 app.use("/api", router);
 

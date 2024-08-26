@@ -2,6 +2,11 @@ import { sendEmail } from "../helper/mailer.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.js";
 import mongoose from "mongoose";
+import multer from "multer";
+import cloudinary from "../helper/cloudinary.js";
+import post from "../models/post.js";
+import { v4 as uuid } from "uuid";
+import { uploadFileToCloudinary } from "../helper/funccloud.js";
 
 const generateAccessTokenAndRefereshToken = async function (userId, res) {
   try {
@@ -63,7 +68,7 @@ export const signUp = async (req, res) => {
         message: "Something went wrong while registering the user",
       });
     }
-    console.log(user);
+    // console.log(user);
     await sendEmail({ email, emailType: "VERIFY", userId: user._id });
 
     res.status(201).json({
@@ -188,7 +193,7 @@ export async function verifyEmail(req, res) {
     if (!user) {
       return res.status(400).json({ error: "Invalid token", status: 400 });
     }
-    console.log(user);
+    // console.log(user);
     user.isVerfied = true;
     user.verifyToken = undefined;
     user.verifyTokenExpiry = undefined;
@@ -202,3 +207,104 @@ export async function verifyEmail(req, res) {
     return res.status(500).json({ error: error.message, status: 500 });
   }
 }
+
+// export async function addPost(req, res) {
+//   try {
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No file uploaded" });
+//     }
+//     const { title, content, userId } = req.body;
+//     const { file } = req;
+
+//     // Validate inputs
+//     if (!title || !content) {
+//       return res
+//         .status(400)
+//         .json({ message: "Title and content are required" });
+//     }
+
+//     let imageUrl = "";
+//     if (file) {
+//       // Wrap the Cloudinary upload in a promise
+//       const result = await new Promise((resolve, reject) => {
+//         cloudinary.uploader
+//           .upload(
+//             {
+//               resource_type: "image",
+//               folder: "blogs",
+//             },
+//             (error, result) => {
+//               if (error) {
+//                 reject(error);
+//               } else {
+//                 resolve(result);
+//               }
+//             }
+//           )
+//           .end(file.buffer);
+//       });
+//       console.log(result);
+
+//       imageUrl = result.secure_url;
+//     }
+
+//     // Save the post to the database
+//     const newPost = new Post({
+//       title,
+//       content,
+//       author: userId,
+//       frontImage: imageUrl,
+//     });
+
+//     await newPost.save();
+
+//     res.status(201).json({ message: "Post added successfully", post: newPost });
+//   } catch (error) {
+//     console.error("Error adding post:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// }
+
+export async function addPost(req, res) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    const { title, content, userId } = req.body;
+    const { file } = req;
+
+    // Validate inputs
+    if (!title || !content) {
+      return res
+        .status(400)
+        .json({ message: "Title and content are required" });
+    }
+
+    let imageUrl = "";
+    if (file) {
+      // Upload image to Cloudinary
+      const result = await uploadFileToCloudinary(file);
+      console.log(result);
+      imageUrl = result.url;
+    }
+
+    // Save the post to the database
+
+    const newPost = new post({
+      title,
+      content,
+      author: userId,
+      frontImage: imageUrl,
+    });
+
+    await newPost.save();
+
+    res.status(201).json({ message: "Post added successfully", post: newPost });
+  } catch (error) {
+    console.error("Error adding post:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+

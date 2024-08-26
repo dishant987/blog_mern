@@ -5,24 +5,27 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
+import { MenuItem } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from './ToggleColor';
 import { useCookies } from 'react-cookie';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from './Themecontext';
 
 function Navbar() {
   const { mode, toggleColorMode } = useTheme();
   const [open, setOpen] = useState(false);
   const [cookies, , removeCookie] = useCookies(['accessToken']);
-
+  const navigate = useNavigate();
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
+
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -39,16 +42,19 @@ function Navbar() {
   };
 
   const handleSignOut = async () => {
+
     try {
       const response = await axios.post('http://localhost:3000/api/users/logout', {}, { withCredentials: true });
+      console.log(response.data)
       if (response.data.statuscode === 200 && response.data.message === "User Logged Out") {
         toast.success(response.data.message);
         removeCookie('accessToken');
         window.location.href = '/';
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
+
   };
 
   const isLoggedIn = !!cookies.accessToken;
@@ -98,27 +104,59 @@ function Navbar() {
               }}
             >
               <img
-                src={'/1.jpg'}
+                src={
+                  '/1.jpg'
+                }
+
                 style={{ marginLeft: "10px", width: "50px", borderRadius: '47%' }}
+
                 alt="logo of sitemark"
               />
               <Box sx={{ display: { xs: 'none', md: 'flex', gap: 10 } }}>
+
+
+
                 <MenuItem
-                  onClick={() => scrollToSection('all-posts')}
+                  component={Link}
+                  to="/allpost"
                   sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+
                 >
                   <Typography variant="body2" color="text.primary">
-                    All Posts
+                    All Post
                   </Typography>
                 </MenuItem>
 
                 {isLoggedIn && (
                   <MenuItem
-                    onClick={() => scrollToSection('user-posts')}
+                    onClick={() => scrollToSection('pricing')}
                     sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+
                   >
                     <Typography variant="body2" color="text.primary">
                       Posts
+                    </Typography>
+                  </MenuItem>
+                )}
+                {isLoggedIn && (
+                  <MenuItem
+                    component={Link}
+                    to="/addpost"
+                    sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Add Post
+                    </Typography>
+                  </MenuItem>
+                )}
+                {isLoggedIn && (
+                  <MenuItem
+                    component={Link}
+                    to="/profile"
+                    sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Profile
                     </Typography>
                   </MenuItem>
                 )}
@@ -153,8 +191,11 @@ function Navbar() {
                 </Button>
               ) : (
                 <>
+
                   <Button
-                    href='/login'
+
+                    component={Link}
+                    to="/login"
                     color="primary"
                     variant="outlined"
                     size="small"
@@ -162,22 +203,109 @@ function Navbar() {
                   >
                     Sign In
                   </Button>
+
                   <Button
                     color="primary"
                     variant="contained"
-                    href='/signup'
+                    component={Link}
+                    to="/signup"
                     size="small"
                     sx={{ borderRadius: 15, margin: 1 }}
                   >
                     Signup
                   </Button>
+
+
                 </>
               )}
+            </Box>
+            <Box sx={{ display: { sm: '', md: 'none' } }}>
+              <Button
+                variant="text"
+                color="primary"
+                aria-label="menu"
+                onClick={toggleDrawer(true)}
+                sx={{ minWidth: '30px', p: '4px' }}
+              >
+                <MenuIcon />
+              </Button>
+              <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
+                <Box
+                  sx={{
+                    minWidth: '60dvw',
+                    p: 2,
+                    backgroundColor: 'background.paper',
+                    flexGrow: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'end',
+                      flexGrow: 1,
+                    }}
+                  >
+                    <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                  </Box>
+                  <MenuItem onClick={() => scrollToSection('features')}>
+                    Features
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection('testimonials')}>
+                    Testimonials
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection('highlights')}>
+                    Highlights
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection('pricing')}>
+                    Pricing
+                  </MenuItem>
+                  <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+                  <Divider />
+                  {isLoggedIn ? (
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={handleSignOut}
+                        sx={{ width: '100%' }}
+                      >
+                        Sign Out
+                      </Button>
+                    </MenuItem>
+                  ) : (
+                    <>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          component="a"
+                          href="/signup"
+                          sx={{ width: '100%' }}
+                        >
+                          Sign Up
+                        </Button>
+                      </MenuItem>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          component="a"
+                          href="/login"
+                          sx={{ width: '100%' }}
+                        >
+                          Sign In
+                        </Button>
+                      </MenuItem>
+                    </>
+                  )}
+                </Box>
+              </Drawer>
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-    </div>
+    </div >
   );
 }
 
