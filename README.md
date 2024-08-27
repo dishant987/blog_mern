@@ -42,6 +42,9 @@ Below is a list of the main API routes used in the application:
 - [Node.js](https://nodejs.org/) (v14 or later)
 - [MongoDB](https://www.mongodb.com/) (running locally or using a cloud service)
 - [Cloudinary](https://cloudinary.com/) account for image hosting
+- - **Vite**: A modern build tool for React applications. Install it globally if needed by running:
+  ```bash
+   npm create vite@latest
 
 ### Setup
 
