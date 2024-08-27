@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Box, Divider } from '@mui/material';
+import { Container, Typography, Box, Divider, Skeleton } from '@mui/material';
 import { styled } from '@mui/system';
 import { useTheme } from '../Themecontext';
 import axios from 'axios';
@@ -35,21 +35,6 @@ const StyledImage = styled(motion.img)(({ theme }) => ({
   position: 'relative',
   transition: 'transform 0.3s, box-shadow 0.3s',
   overflow: 'hidden',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '-5px',
-    left: '-5px',
-    right: '-5px',
-    bottom: '-5px',
-    borderRadius: '15px',
-    border: '2px solid transparent',
-    backgroundImage: `linear-gradient(white, white), linear-gradient(45deg, rgba(255,255,255,0.5), rgba(255,255,255,0))`,
-    backgroundSize: '200% 200%',
-    backgroundPosition: '0% 0%',
-    animation: 'shimmer 2s infinite',
-    zIndex: 1,
-  },
   zIndex: 0,
   [theme.breakpoints.down('md')]: {
     width: '80%',
@@ -91,7 +76,20 @@ const PostView = () => {
   }, [id]);
 
   if (post === null) {
-    return <Typography variant="h6">Loading...</Typography>;
+    return (
+      <StyledContainer
+        sx={{
+          backgroundColor: mode === 'dark' ? '#1c1c1c' : '#ffffff',
+          border: `1px solid ${mode === 'dark' ? '#444' : '#e0e0e0'}`,
+          boxShadow: `0px 4px 8px ${mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+        }}
+      >
+        <Skeleton variant="text" sx={{ fontSize: '2.5rem', marginBottom: '16px' }} />
+        <Skeleton variant="rectangular" sx={{ width: '40%', height: 300, marginBottom: '24px', margin: 'auto', borderRadius: '10px' }} />
+        <Skeleton variant="rectangular" sx={{ height: 200,marginTop:4, marginBottom: '16px' }} />
+        <Skeleton variant="text" sx={{ width: '50%', margin: '0 auto', marginTop: '16px' }} />
+      </StyledContainer>
+    );
   }
 
   if (!post) {

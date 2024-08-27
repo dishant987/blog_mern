@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Grid, Typography, Box } from '@mui/material';
+import { Container, Grid, Typography, Box, CircularProgress, Skeleton } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
 import { styled } from '@mui/system';
@@ -47,16 +47,29 @@ const ContentBox = styled(Box)(({ mode }) => ({
   },
 }));
 
+const PostImage = styled(Box)(({ theme }) => ({
+  height: '180px',
+  width: '100%',
+  borderRadius: '8px 8px 0 0', // Only round top corners
+  position: 'relative',
+}));
+
 const PostsList = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // State to track loading
   const { mode } = useTheme(); // Access the current theme mode (light or dark)
 
   const fetchData = async () => {
+    setLoading(true)
     try {
       const response = await axios.get('http://localhost:3000/api/allpost');
       setData(response.data);
+
     } catch (error) {
       console.log(error);
+
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -69,50 +82,82 @@ const PostsList = () => {
       <StarryBackground />
       <Container sx={{ marginTop: 15 }}>
         <Grid container spacing={2}> {/* Add spacing between the grid items */}
-          {data.map((post, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}> {/* Updated for 4 cards in a row */}
-              <Link to={`/post/${post._id}`} style={{ textDecoration: 'none' }}>
+          {loading ? (
+            Array.from({ length: 4 }).map((_, index) => ( // Show 4 skeleton loaders
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <StyledCard>
                   <PostCard>
-                    <Box
-                      component="img"
-                      src={post.frontImage}
-                      alt={post.title}
-                      sx={{
-                        height: '180px',
-                        width: '100%',
-                        objectFit: 'cover',
-                        borderRadius: '8px 8px 0 0', // Only round top corners
-                      }}
-                    />
+                    <PostImage>
+                      <Skeleton variant="rectangular" height="180px" />
+                    </PostImage>
                     <ContentBox mode={mode}>
-                      <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{
-                          color: mode === 'dark' ? '#fff' : '#000',
-                          textDecoration: 'none',
-                          fontWeight: 'bold', // Make title bold
-                        }}
-                      >
-                        {post.title}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: mode === 'dark' ? '#bbb' : '#666',
-                          marginTop: '8px',
-                          display: 'block', // Ensure the timestamp is on a new line
-                        }}
-                      >
-                        {moment(post.createdAt).fromNow()}
-                      </Typography>
+                      <Skeleton variant="text" width="80%" height="2rem" />
+                      <Skeleton variant="text" width="40%" height="1rem" />
                     </ContentBox>
                   </PostCard>
                 </StyledCard>
-              </Link>
-            </Grid>
-          ))}
+              </Grid>
+            ))
+          ) : (
+            data.map((post, index) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                <Link to={`/post/${post._id}`} style={{ textDecoration: 'none' }}>
+                  <StyledCard>
+                    <PostCard>
+                      <PostImage>
+                        <img
+                          src={post.frontImage}
+                          alt={post.title}
+                          style={{
+                            height: '100%',
+                            width: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '8px 8px 0 0',
+                            display: 'block',
+                          }}
+                          onLoad={(e) => e.target.style.opacity = 1}
+                          onError={(e) => e.target.style.opacity = 0}
+                        />
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            visibility: post.frontImage ? 'hidden' : 'visible',
+                          }}
+                        />
+                      </PostImage>
+                      <ContentBox mode={mode}>
+                        <Typography
+                          variant="h6"
+                          component="div"
+                          sx={{
+                            color: mode === 'dark' ? '#fff' : '#000',
+                            textDecoration: 'none',
+                            fontWeight: 'bold',
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: mode === 'dark' ? '#bbb' : '#666',
+                            marginTop: '8px',
+                            display: 'block',
+                          }}
+                        >
+                          {moment(post.createdAt).fromNow()}
+                        </Typography>
+                      </ContentBox>
+                    </PostCard>
+                  </StyledCard>
+                </Link>
+              </Grid>
+            ))
+          )}
         </Grid>
       </Container>
     </>

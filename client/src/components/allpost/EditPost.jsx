@@ -8,6 +8,7 @@ import {
     TextField,
     Button,
     CircularProgress,
+    Skeleton,
 } from '@mui/material';
 import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
@@ -18,7 +19,6 @@ import { useCookies } from 'react-cookie';
 import toast from 'react-hot-toast';
 import { decodeToken } from '../../utils/decode';
 import { useNavigate, useParams } from 'react-router-dom';
-
 
 const validationSchema = Yup.object({
     title: Yup.string(), // No longer required
@@ -31,10 +31,10 @@ const validationSchema = Yup.object({
 
 const EditPost = () => {
     const { postid } = useParams(); // Get post ID from URL parameters
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true); // Initial loading state
     const [post, setPost] = useState(null);
     const [cookies] = useCookies(['accessToken']);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [initialValues, setInitialValues] = useState({
         title: '',
         content: '',
@@ -53,13 +53,15 @@ const EditPost = () => {
                     content: response.data.content || '',
                     frontImage: null, // Set to null or the existing image URL based on your needs
                 });
+                setLoading(false); // Data has been fetched
             } catch (error) {
                 console.error('Error fetching post:', error);
+                setLoading(false); // In case of error, stop loading
             }
         };
         fetchPost();
     }, [postid]);
-    console.log(post)
+
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setLoading(true);
 
@@ -76,7 +78,6 @@ const EditPost = () => {
         }
 
         const formData = new FormData();
-        console.log(values)
         if (values.title) {
             formData.append('title', values.title);
         }
@@ -89,14 +90,12 @@ const EditPost = () => {
         }
         formData.append('postId', postid);
 
-
         try {
             const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData);
             if (response.data.message === "Post updated successfully") {
                 toast.success(response.data.message);
-                navigate('/userpost')
+                navigate('/userpost');
             }
-            console.log(response.data);
         } catch (error) {
             console.error('Error updating post:', error);
         } finally {
@@ -112,58 +111,67 @@ const EditPost = () => {
                     <Typography component="h1" variant="h5">
                         Edit Post
                     </Typography>
-                    {post && (
-                        <Formik
-                            initialValues={initialValues}
-                            validationSchema={validationSchema}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ setFieldValue, errors, touched, isSubmitting, values }) => (
-                                <Form>
-                                    <Box sx={{ mt: 2 }}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12}>
-                                                <Field
-                                                    as={TextField}
-                                                    name="title"
-                                                    label="Title"
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    error={errors.title && touched.title}
-                                                    helperText={errors.title && touched.title ? errors.title : null}
-                                                />
+                    {loading ? (
+                        <Box sx={{ mt: 2 }}>
+                            <Skeleton variant="text" width="80%" height="2rem" />
+                            <Skeleton variant="rectangular" height="200px" sx={{ mt: 2 }} />
+                            <Skeleton variant="text" width="60%" height="1rem" sx={{ mt: 2 }} />
+                            <Skeleton variant="rectangular" height="40px" sx={{ mt: 2 }} />
+                        </Box>
+                    ) : (
+                        post && (
+                            <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onSubmit={handleSubmit}
+                            >
+                                {({ setFieldValue, errors, touched, isSubmitting, values }) => (
+                                    <Form>
+                                        <Box sx={{ mt: 2 }}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <Field
+                                                        as={TextField}
+                                                        name="title"
+                                                        label="Title"
+                                                        fullWidth
+                                                        variant="outlined"
+                                                        error={errors.title && touched.title}
+                                                        helperText={errors.title && touched.title ? errors.title : null}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <RTE
+                                                        name="content"
+                                                        label="Content"
+                                                        value={values.content}
+                                                        onChange={(name, content) => setFieldValue(name, content)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Dropzone setFieldValue={setFieldValue} fieldValue={values.frontImage} />
+                                                    {errors.frontImage && touched.frontImage && (
+                                                        <Typography variant="caption" color="error">
+                                                            {errors.frontImage}
+                                                        </Typography>
+                                                    )}
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={12}>
-                                                <RTE
-                                                    name="content"
-                                                    label="Content"
-                                                    value={values.content}
-                                                    onChange={(name, content) => setFieldValue(name, content)}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Dropzone setFieldValue={setFieldValue} fieldValue={values.frontImage} />
-                                                {errors.frontImage && touched.frontImage && (
-                                                    <Typography variant="caption" color="error">
-                                                        {errors.frontImage}
-                                                    </Typography>
-                                                )}
-                                            </Grid>
-                                        </Grid>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            color="primary"
-                                            fullWidth
-                                            sx={{ mt: 3 }}
-                                            disabled={isSubmitting}
-                                        >
-                                            {loading ? <CircularProgress size={24} /> : 'Update Post'}
-                                        </Button>
-                                    </Box>
-                                </Form>
-                            )}
-                        </Formik>
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                color="primary"
+                                                fullWidth
+                                                sx={{ mt: 3 }}
+                                                disabled={isSubmitting}
+                                            >
+                                                {loading ? <CircularProgress size={24} /> : 'Update Post'}
+                                            </Button>
+                                        </Box>
+                                    </Form>
+                                )}
+                            </Formik>
+                        )
                     )}
                 </Grid>
             </Grid>

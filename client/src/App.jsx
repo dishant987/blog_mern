@@ -15,6 +15,7 @@ import AllPost from './components/allpost/AllPost';
 import PostView from './components/allpost/PostView';
 import UserPost from './components/allpost/UserPost';
 import EditPost from './components/allpost/EditPost';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Layout Component with Navbar
 const Layout = () => (
@@ -47,31 +48,42 @@ const App = () => {
         },
         {
           path: "/profile",
-          element: <UserProfile />,
+
+          element: <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>,
         },
         {
           path: "/verifyemail",
-          element: <VerifyEmail />,
+          element: <ProtectedRoute>
+            <VerifyEmail />
+          </ProtectedRoute>,
         },
         {
           path: "/addpost",
-          element: <AddPostForm />,
+          element: <ProtectedRoute>
+            <AddPostForm />
+          </ProtectedRoute>,
         },
         {
           path: "/allpost",
-          element:<AllPost/>,
+          element: <AllPost />,
         },
         {
           path: "/post/:id",
-          element:<PostView/>,
+          element: <PostView />,
         },
         {
           path: "/userpost",
-          element:<UserPost/>,
+          element: <ProtectedRoute>
+            <UserPost />
+          </ProtectedRoute>,
         },
         {
           path: "/editpost/:postid",
-          element:<EditPost/>,
+          element: <ProtectedRoute>
+            <EditPost />
+          </ProtectedRoute>,
         },
       ],
     },
@@ -82,7 +94,7 @@ const App = () => {
       <CookiesProvider>
         <CssBaseline />
         <RouterProvider router={router}>
-          
+
         </RouterProvider>
       </CookiesProvider>
     </MUIThemeProvider>
