@@ -248,19 +248,61 @@ function Navbar() {
                 >
                   <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                 </Box>
-                <MenuItem onClick={() => scrollToSection('features')}>
-                  Features
+               
+              <MenuItem
+                component={Link}
+                to="/allpost"
+                sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+
+              >
+                <Typography variant="body2" color="text.primary">
+                  All Post
+                </Typography>
+              </MenuItem>
+
+              {isLoggedIn && (
+                <MenuItem
+                  component={Link}
+                  to='/userpost'
+                  onClick={() => scrollToSection('pricing')}
+                  sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Posts
+                  </Typography>
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection('testimonials')}>
-                  Testimonials
+              )}
+              {isLoggedIn && (
+                <MenuItem
+                  component={Link}
+                  to="/addpost"
+                  sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Add Post
+                  </Typography>
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection('highlights')}>
-                  Highlights
+              )}
+              {isLoggedIn && (
+                <MenuItem
+                  component={Link}
+                  to="/profile"
+                  sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                >
+                  <Typography variant="body2" color="text.primary">
+                    Profile
+                  </Typography>
                 </MenuItem>
-                <MenuItem onClick={() => scrollToSection('pricing')}>
-                  Pricing
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
+              )}
+                 <MenuItem
+                onClick={() => scrollToSection('faq')}
+                sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+              >
+                <Typography variant="body2" color="text.primary">
+                  FAQ
+                </Typography>
+              </MenuItem>
                 <Divider />
                 {isLoggedIn ? (
                   <MenuItem>

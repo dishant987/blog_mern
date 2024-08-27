@@ -17,14 +17,16 @@ import RTE from '../rte/RTE'; // Update the path to your RTE component
 import { useCookies } from 'react-cookie';
 import toast from 'react-hot-toast';
 import { decodeToken } from '../../utils/decode';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
 
 const validationSchema = Yup.object({
-    title: Yup.string(),
-    content: Yup.string(),
+    title: Yup.string(), // No longer required
+    content: Yup.string(), // No longer required
     frontImage: Yup.mixed()
         .test('fileSize', 'File size is too large', value => !value || (value && value.size <= 5 * 1024 * 1024)) // 5MB
-        .test('fileType', 'Unsupported File Format', value => !value || (value && ['image/jpeg', 'image/png'].includes(value.type))),
+        .test('fileType', 'Unsupported File Format', value => !value || (value && ['image/jpeg', 'image/png'].includes(value.type)))
+        .notRequired(),
 });
 
 const EditPost = () => {
@@ -32,6 +34,7 @@ const EditPost = () => {
     const [loading, setLoading] = useState(false);
     const [post, setPost] = useState(null);
     const [cookies] = useCookies(['accessToken']);
+    const navigate = useNavigate()
     const [initialValues, setInitialValues] = useState({
         title: '',
         content: '',
@@ -44,6 +47,7 @@ const EditPost = () => {
             try {
                 const response = await axios.get(`http://localhost:3000/api/singlepost/${postid}`);
                 setPost(response.data);
+                
                 setInitialValues({
                     title: response.data.title || '',
                     content: response.data.content || '',
@@ -55,7 +59,7 @@ const EditPost = () => {
         };
         fetchPost();
     }, [postid]);
-
+    console.log(post)
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setLoading(true);
 
@@ -72,6 +76,7 @@ const EditPost = () => {
         }
 
         const formData = new FormData();
+        console.log(values)
         if (values.title) {
             formData.append('title', values.title);
         }
@@ -80,18 +85,16 @@ const EditPost = () => {
         }
         if (values.frontImage) {
             formData.append('file', values.frontImage);
+            formData.append('oldimageurl', post.frontImage);
         }
-        formData.append('userId', userId); // Append user ID to form data
+        formData.append('postId', postid);
+
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/posts/${postid}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData);
             if (response.data.message === "Post updated successfully") {
                 toast.success(response.data.message);
-                resetForm();
+                navigate('/userpost')
             }
             console.log(response.data);
         } catch (error) {

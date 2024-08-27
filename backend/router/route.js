@@ -12,5 +12,9 @@ router.route("/addpost").post(upload.single("file"), controller.addPost);
 router.route("/allpost").get(controller.AllPost);
 router.route("/singlepost/:id").get(controller.SinglePost);
 router.route("/singleuserpost/:userid").get(controller.SingleUserPost);
+router.route("/deletepost").delete(controller.deletePost);
+router
+  .route("/edituserpost")
+  .put(upload.single("file"), controller.editUserPost);
 
 export default router;

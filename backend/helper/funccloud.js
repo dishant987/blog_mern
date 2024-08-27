@@ -40,4 +40,23 @@ const uploadFileToCloudinary = async (file) => {
   }
 };
 
-export { uploadFileToCloudinary };
+const deleteFileFromCloudinary = async (publicId) => {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.destroy(
+        publicId,
+        { resource_type: "image", folder: "blogs" },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+    });
+
+    return result;
+  } catch (err) {
+    throw new Error(`Error deleting file from Cloudinary: ${err.message}`);
+  }
+};
+
+export { uploadFileToCloudinary, deleteFileFromCloudinary };

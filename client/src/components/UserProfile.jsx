@@ -41,7 +41,7 @@ export default function SignUp() {
       }
     }
   }, [cookies.accessToken, navigate]);
-
+  console.log(userData)
   const isLoading = !userData;
 
   return (

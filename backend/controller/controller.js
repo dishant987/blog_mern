@@ -6,7 +6,10 @@ import multer from "multer";
 import cloudinary from "../helper/cloudinary.js";
 import post from "../models/post.js";
 import { v4 as uuid } from "uuid";
-import { uploadFileToCloudinary } from "../helper/funccloud.js";
+import {
+  deleteFileFromCloudinary,
+  uploadFileToCloudinary,
+} from "../helper/funccloud.js";
 
 const generateAccessTokenAndRefereshToken = async function (userId, res) {
   try {
@@ -208,7 +211,6 @@ export async function verifyEmail(req, res) {
   }
 }
 
-
 export async function addPost(req, res) {
   try {
     if (!req.file) {
@@ -274,15 +276,88 @@ export async function SinglePost(req, res) {
 }
 export async function SingleUserPost(req, res) {
   try {
-    const userId = req.params.userid; 
-    const onepost = await post.find({author:userId});
-    console.log(onepost)
+    const userId = req.params.userid;
+    const onepost = await post.find({ author: userId });
+
     if (!onepost) {
       return res.status(404).json({ message: "Post not found" });
     }
-  
 
     res.status(200).json(onepost);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+export async function editUserPost(req, res) {
+  try {
+    const { title, content, postId, oldimageurl } = req.body;
+    const { file } = req;
+
+    // Check for required fields
+    if (!postId || (!title && !content)) {
+      return res
+        .status(400)
+        .json({ message: "Required fields are missing or empty" });
+    }
+
+    // Prepare an update object
+    const updateFields = {};
+
+    // Conditionally add fields to the update object
+    if (title) {
+      updateFields.title = title;
+    }
+
+    if (content) {
+      updateFields.content = content;
+    }
+
+    if (file) {
+      // Extract the public ID from the old image URL if it exists
+      if (oldimageurl) {
+        const urlParts = oldimageurl.split("/");
+        const publicId = urlParts.slice(-2).join("/").split(".")[0];
+        const res = await deleteFileFromCloudinary(publicId);
+        console.log(res)
+      }
+
+      // Upload the new image to Cloudinary
+      const result = await uploadFileToCloudinary(file);
+      updateFields.frontImage = result.url; // Add the new image URL to the update object
+    }
+
+    // Update the post only if there are fields to update
+    if (Object.keys(updateFields).length > 0) {
+      await post.updateOne({ _id: postId }, { $set: updateFields });
+      res.status(200).json({ message: "Post updated successfully" });
+    } else {
+      res.status(400).json({ message: "No changes detected" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+export async function deletePost(req, res) {
+  try {
+    const { postId, frontImage } = req.body;
+
+    // Delete image from Cloudinary if URL is provided
+    if (frontImage) {
+      const urlParts = frontImage.split("/");
+      const publicId = urlParts.slice(-2).join("/").split(".")[0];
+      await deleteFileFromCloudinary(publicId);
+    }
+
+    // Perform the deletion of the post
+    const result = await post.deleteOne({ _id: postId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    res.status(200).json({ message: "Post deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
