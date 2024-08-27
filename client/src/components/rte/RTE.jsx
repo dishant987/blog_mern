@@ -20,6 +20,13 @@ const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
         }
     `;
 
+    // Responsive height based on screen width
+    const getEditorHeight = () => {
+        if (window.innerWidth < 640) return 300; // Mobile
+        if (window.innerWidth < 768) return 400; // Tablet
+        return 500; // Laptop and PC
+    };
+
     return (
         <div className="w-full">
             {label && (
@@ -33,7 +40,7 @@ const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
                     initialValue={defaultValue}
                     value={value}
                     init={{
-                        height: 500,
+                        height: getEditorHeight(),
                         menubar: true,
                         plugins: [
                             "image",
@@ -61,7 +68,7 @@ const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
                     onEditorChange={(content) => onChange(name, content)}
                 />
             ) : (
-                <Skeleton variant="rectangular" height={500} sx={{ bgcolor: 'grey.300' }} />
+                <Skeleton variant="rectangular" height={getEditorHeight()} sx={{ bgcolor: 'grey.300' }} />
             )}
         </div>
     );
