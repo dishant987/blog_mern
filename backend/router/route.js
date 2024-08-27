@@ -8,6 +8,9 @@ router.route("/users/signup").post(controller.signUp);
 router.route("/users/signin").post(controller.signIn);
 router.route("/users/logout").post(verifyJWT, controller.userLogout);
 router.route("/verifymail").post(controller.verifyEmail);
-router.route("/addpost").post(upload.single('file'),controller.addPost);
+router.route("/addpost").post(upload.single("file"), controller.addPost);
+router.route("/allpost").get(controller.AllPost);
+router.route("/singlepost/:id").get(controller.SinglePost);
+router.route("/singleuserpost/:userid").get(controller.SingleUserPost);
 
 export default router;

@@ -208,62 +208,6 @@ export async function verifyEmail(req, res) {
   }
 }
 
-// export async function addPost(req, res) {
-//   try {
-//     if (!req.file) {
-//       return res.status(400).json({ message: "No file uploaded" });
-//     }
-//     const { title, content, userId } = req.body;
-//     const { file } = req;
-
-//     // Validate inputs
-//     if (!title || !content) {
-//       return res
-//         .status(400)
-//         .json({ message: "Title and content are required" });
-//     }
-
-//     let imageUrl = "";
-//     if (file) {
-//       // Wrap the Cloudinary upload in a promise
-//       const result = await new Promise((resolve, reject) => {
-//         cloudinary.uploader
-//           .upload(
-//             {
-//               resource_type: "image",
-//               folder: "blogs",
-//             },
-//             (error, result) => {
-//               if (error) {
-//                 reject(error);
-//               } else {
-//                 resolve(result);
-//               }
-//             }
-//           )
-//           .end(file.buffer);
-//       });
-//       console.log(result);
-
-//       imageUrl = result.secure_url;
-//     }
-
-//     // Save the post to the database
-//     const newPost = new Post({
-//       title,
-//       content,
-//       author: userId,
-//       frontImage: imageUrl,
-//     });
-
-//     await newPost.save();
-
-//     res.status(201).json({ message: "Post added successfully", post: newPost });
-//   } catch (error) {
-//     console.error("Error adding post:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// }
 
 export async function addPost(req, res) {
   try {
@@ -307,4 +251,39 @@ export async function addPost(req, res) {
   }
 }
 
+export async function AllPost(req, res) {
+  try {
+    const posts = await post.find();
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
+export async function SinglePost(req, res) {
+  try {
+    const userId = req.params.id;
+    const onepost = await post.findById(userId);
+    if (!onepost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.status(200).json(onepost);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+export async function SingleUserPost(req, res) {
+  try {
+    const userId = req.params.userid; 
+    const onepost = await post.find({author:userId});
+    console.log(onepost)
+    if (!onepost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+  
+
+    res.status(200).json(onepost);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}

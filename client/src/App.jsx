@@ -12,6 +12,9 @@ import { Toaster } from 'react-hot-toast';
 import { CookiesProvider } from 'react-cookie';
 import { useTheme } from './components/Themecontext';
 import AllPost from './components/allpost/AllPost';
+import PostView from './components/allpost/PostView';
+import UserPost from './components/allpost/UserPost';
+import EditPost from './components/allpost/EditPost';
 
 // Layout Component with Navbar
 const Layout = () => (
@@ -58,6 +61,18 @@ const App = () => {
           path: "/allpost",
           element:<AllPost/>,
         },
+        {
+          path: "/post/:id",
+          element:<PostView/>,
+        },
+        {
+          path: "/userpost",
+          element:<UserPost/>,
+        },
+        {
+          path: "/editpost/:postid",
+          element:<EditPost/>,
+        },
       ],
     },
   ]);
@@ -67,14 +82,7 @@ const App = () => {
       <CookiesProvider>
         <CssBaseline />
         <RouterProvider router={router}>
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                borderRadius: "20px",
-              },
-            }}
-          />
+          
         </RouterProvider>
       </CookiesProvider>
     </MUIThemeProvider>

@@ -12,11 +12,11 @@ import {
 import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
 import Dropzone from './Dropzone'; // Update the path to your Dropzone component
 import RTE from './rte/RTE'; // Update the path to your RTE component
 import { useCookies } from 'react-cookie';
 import toast from 'react-hot-toast';
+import { decodeToken } from '../utils/decode';
 
 const validationSchema = Yup.object({
     title: Yup.string().required('Title is required'),
@@ -35,13 +35,11 @@ const AddPostForm = () => {
 
         const accessToken = cookies.accessToken;
         let userId = '';
-        try {
-            const decodedToken = jwtDecode(accessToken);
+        const decodedToken = decodeToken(accessToken); // Use the utility function to decode the token
+
+        if (decodedToken) {
             userId = decodedToken._id;
-
-        } catch (error) {
-            console.error('Error decoding token:', error);
-
+        } else {
             setLoading(false);
             setSubmitting(false);
             return;

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Editor } from "@tinymce/tinymce-react";
 import { Skeleton } from '@mui/material';
-import { useTheme } from '../Themecontext';
 
 const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
     const [editorLoaded, setEditorLoaded] = useState(false);
-    const { mode } = useTheme(); // Get current theme mode
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -15,20 +13,17 @@ const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
         return () => clearTimeout(timer); // Cleanup timer on unmount
     }, []);
 
-
     const contentStyle = `
         body {
             font-family: Helvetica, Arial, sans-serif;
             font-size: 14px;
-            background-color: ${mode === 'dark' ? '#333' : '#fff'};
-            color: ${mode === 'dark' ? '#fff' : '#000'};
         }
     `;
 
     return (
         <div className="w-full">
             {label && (
-                <label className={`inline-block mb-1 pl-1 ${mode === 'dark' ? 'text-white' : 'text-black'}`}>
+                <label className="inline-block mb-1 pl-1 text-black">
                     {label}
                 </label>
             )}
@@ -66,7 +61,7 @@ const RTE = ({ name, label, value, onChange, defaultValue = "" }) => {
                     onEditorChange={(content) => onChange(name, content)}
                 />
             ) : (
-                <Skeleton variant="rectangular" height={500} sx={{ bgcolor: mode === 'dark' ? 'grey.800' : 'grey.300' }} />
+                <Skeleton variant="rectangular" height={500} sx={{ bgcolor: 'grey.300' }} />
             )}
         </div>
     );
