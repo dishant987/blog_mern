@@ -76,10 +76,7 @@ export default function Login() {
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
         setCookie('accessToken', response.data.accessToken, { path: '/', expires });
-
         navigate('/profile');
-      } else {
-        console.log(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -105,7 +102,7 @@ export default function Login() {
     <>
       {isLoading ? (
         <Grid container component="main" sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Grid item xs={12} sm={8} md={6} lg={4}  component={Paper} elevation={6} sx={{ borderRadius: 4 }}>
+          <Grid item xs={12} sm={8} md={6} lg={4} component={Paper} elevation={6} sx={{ borderRadius: 4 }}>
             <Box
               sx={{
                 my: 8,

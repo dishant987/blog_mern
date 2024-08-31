@@ -62,7 +62,7 @@ const AddPostForm = () => {
                 resetForm();
                 navigate('/userpost')
             }
-            console.log(response.data);
+          
         } catch (error) {
             console.error('Error adding post:', error);
         } finally {

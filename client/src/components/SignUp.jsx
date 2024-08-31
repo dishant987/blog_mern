@@ -61,7 +61,7 @@ export default function SignUp() {
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    console.log(values)
+
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signup`, values);
       if (response.status === 201 && response.data.message === 'Email sent Successfully and Verify your mail for login') {

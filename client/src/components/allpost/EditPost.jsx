@@ -47,7 +47,7 @@ const EditPost = () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`,{withCredentials:true});
                 setPost(response.data);
-                console.log(response)
+               
                 setInitialValues({
                     title: response.data.title || '',
                     content: response.data.content || '',

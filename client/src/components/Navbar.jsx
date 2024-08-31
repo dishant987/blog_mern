@@ -44,7 +44,6 @@ function Navbar() {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/logout`, {}, { withCredentials: true });
-      console.log(response.data)
       if (response.data.statuscode === 200 && response.data.message === "User Logged Out") {
         toast.success(response.data.message);
         removeCookie('accessToken');

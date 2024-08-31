@@ -20,7 +20,7 @@ export default function VerifyEmail() {
       if (res.status === 200 && res.data.message === "Email is already verifyed") {
         toast.success(res.data.message);
       }
-      console.log(res);
+  
     } catch (error) {
       setError(true);
       console.log(error);
