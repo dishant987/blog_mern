@@ -12,7 +12,7 @@ export default function VerifyEmail() {
 
   const verifyUserEmail = async () => {
     try {
-      const res = await axios.post(`http://localhost:3000/api/verifymail`, { token: token });
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/verifymail`, { token: token });
       setVerified(true);
       if (res.status === 200 && res.data.message === "Email verified successfully") {
         toast.success(res.data.message);

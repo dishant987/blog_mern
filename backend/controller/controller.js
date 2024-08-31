@@ -231,7 +231,7 @@ export async function addPost(req, res) {
     if (file) {
       // Upload image to Cloudinary
       const result = await uploadFileToCloudinary(file);
-      console.log(result);
+
       imageUrl = result.url;
     }
 
@@ -319,7 +319,6 @@ export async function editUserPost(req, res) {
         const urlParts = oldimageurl.split("/");
         const publicId = urlParts.slice(-2).join("/").split(".")[0];
         const res = await deleteFileFromCloudinary(publicId);
-        console.log(res)
       }
 
       // Upload the new image to Cloudinary

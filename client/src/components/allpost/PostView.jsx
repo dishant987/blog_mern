@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Box, Divider, Skeleton } from '@mui/material';
+import { Container, Typography, Box, Divider, Skeleton, TextField, Button } from '@mui/material';
 import { styled } from '@mui/system';
 import { useTheme } from '../Themecontext';
 import axios from 'axios';
-import { motion } from 'framer-motion';
 import moment from 'moment';
 import DOMPurify from 'dompurify';
+import Comment from '../comment/Comment'; // Import the Comment component
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   marginTop: '96px',
@@ -25,7 +25,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   },
 }));
 
-const StyledImage = styled(motion.img)(({ theme }) => ({
+const StyledImage = styled('img')(({ theme }) => ({
   width: '60%',
   height: 'auto',
   borderRadius: '10px',
@@ -59,13 +59,16 @@ const Title = styled(Typography)(({ theme }) => ({
 
 const PostView = () => {
   const [post, setPost] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState([]);
   const { id } = useParams();
   const { mode } = useTheme();
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/singlepost/${id}`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${id}`);
       setPost(response.data);
+      setComments(response.data.comments || []);
     } catch (error) {
       console.error(error);
     }
@@ -74,6 +77,16 @@ const PostView = () => {
   useEffect(() => {
     fetchData();
   }, [id]);
+
+  const handleCommentSubmit = async () => {
+    try {
+      const response = await axios.post(`http://localhost:3000/api/comments`, { content: newComment, postId: id });
+      setComments([...comments, response.data.comment]);
+      setNewComment('');
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (post === null) {
     return (
@@ -86,7 +99,7 @@ const PostView = () => {
       >
         <Skeleton variant="text" sx={{ fontSize: '2.5rem', marginBottom: '16px' }} />
         <Skeleton variant="rectangular" sx={{ width: '40%', height: 300, marginBottom: '24px', margin: 'auto', borderRadius: '10px' }} />
-        <Skeleton variant="rectangular" sx={{ height: 200,marginTop:4, marginBottom: '16px' }} />
+        <Skeleton variant="rectangular" sx={{ height: 200, marginTop: 4, marginBottom: '16px' }} />
         <Skeleton variant="text" sx={{ width: '50%', margin: '0 auto', marginTop: '16px' }} />
       </StyledContainer>
     );
@@ -106,26 +119,17 @@ const PostView = () => {
         boxShadow: `0px 4px 8px ${mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
       }}
     >
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <Title
+        sx={{
+          color: mode === 'dark' ? '#ffffff' : '#000000',
+        }}
       >
-        <Title
-          sx={{
-            color: mode === 'dark' ? '#ffffff' : '#000000',
-          }}
-        >
-          {post.title}
-        </Title>
-      </motion.div>
+        {post.title}
+      </Title>
 
       <StyledImage
         src={post.frontImage}
         alt={post.title}
-        initial={{ scale: 1.05 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.5 }}
       />
 
       <Box
@@ -158,6 +162,35 @@ const PostView = () => {
       >
         {`Published on ${moment(post.createdAt).format('MMMM Do, YYYY')}`}
       </Typography>
+
+      <Divider sx={{ margin: '20px 0' }} />
+
+      {/* <Box>
+        <Typography variant="h6" sx={{ marginBottom: '16px' }}>Comments:</Typography>
+        {comments.map((comment) => (
+          <Comment
+            key={comment._id}
+            comment={comment}
+            onLike={(commentId) => console.log(`Like comment ${commentId}`)}
+            onDislike={(commentId) => console.log(`Dislike comment ${commentId}`)}
+            onReply={() => fetchData()}
+          />
+        ))}
+        <Box sx={{ marginTop: '20px' }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add a comment..."
+            sx={{ marginBottom: '8px' }}
+          />
+          <Button variant="contained" color="primary" onClick={handleCommentSubmit}>
+            Add Comment
+          </Button>
+        </Box>
+      </Box> */}
     </StyledContainer>
   );
 };

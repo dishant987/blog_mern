@@ -77,9 +77,8 @@ const UserPost = () => {
         } else {
             return '';
         }
-
         try {
-            const response = await axios.get(`http://localhost:3000/api/singleuserpost/${userId}`);
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`, { withCredentials: true });
             setData(response.data);
         } catch (error) {
             console.log(error);
@@ -91,10 +90,11 @@ const UserPost = () => {
     const handleDelete = async (postId, frontImage) => {
         setLoading(true);
         try {
-            const response = await axios.delete(`http://localhost:3000/api/deletepost`, {
-                data: { postId, frontImage }
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URI}/api/deletepost`, {
+                data: { postId, frontImage },
+                withCredentials: true
             });
-
+         
             if (response.data.message === "Post deleted successfully") {
                 toast.success(response.data.message);
                 setData(data.filter(post => post._id !== postId));

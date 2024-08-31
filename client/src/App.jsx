@@ -8,7 +8,6 @@ import VerifyEmail from './components/VerifyEmail';
 import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
 import AddPostForm from './components/Addpost';
-import { Toaster } from 'react-hot-toast';
 import { CookiesProvider } from 'react-cookie';
 import { useTheme } from './components/Themecontext';
 import AllPost from './components/allpost/AllPost';
@@ -16,12 +15,14 @@ import PostView from './components/allpost/PostView';
 import UserPost from './components/allpost/UserPost';
 import EditPost from './components/allpost/EditPost';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import Home from './components/home/Home'
+import Footer from './components/Footer';
 // Layout Component with Navbar
 const Layout = () => (
   <>
     <Navbar />
     <Outlet /> {/* Renders the matched route's component */}
+    <Footer />
   </>
 );
 
@@ -36,7 +37,7 @@ const App = () => {
       children: [
         {
           path: "/",
-          element: <Login />,
+          element: <Home />,
         },
         {
           path: "/login",
@@ -71,7 +72,9 @@ const App = () => {
         },
         {
           path: "/post/:id",
-          element: <PostView />,
+          element:
+            <PostView />
+
         },
         {
           path: "/userpost",
@@ -85,6 +88,7 @@ const App = () => {
             <EditPost />
           </ProtectedRoute>,
         },
+
       ],
     },
   ]);

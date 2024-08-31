@@ -62,7 +62,7 @@ const PostsList = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const response = await axios.get('http://localhost:3000/api/allpost');
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/allpost`);
       setData(response.data);
 
     } catch (error) {

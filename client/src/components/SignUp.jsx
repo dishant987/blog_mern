@@ -63,7 +63,7 @@ export default function SignUp() {
     setLoading(true);
     console.log(values)
     try {
-      const response = await axios.post('http://localhost:3000/api/users/signup', values);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signup`, values);
       if (response.status === 201 && response.data.message === 'Email sent Successfully and Verify your mail for login') {
         toast.success(response.data.message);
         navigate('/login');

@@ -24,7 +24,7 @@ function Navbar() {
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
-
+  const navigate = useNavigate()
 
   const scrollToSection = (sectionId) => {
     const sectionElement = document.getElementById(sectionId);
@@ -43,12 +43,12 @@ function Navbar() {
   const handleSignOut = async () => {
 
     try {
-      const response = await axios.post('http://localhost:3000/api/users/logout', {}, { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/logout`, {}, { withCredentials: true });
       console.log(response.data)
       if (response.data.statuscode === 200 && response.data.message === "User Logged Out") {
         toast.success(response.data.message);
         removeCookie('accessToken');
-        window.location.href = '/';
+        navigate('/')
       }
     } catch (error) {
       console.log(error)
@@ -101,15 +101,23 @@ function Navbar() {
               px: 0,
             }}
           >
-            <img
-              src={
-                '/1.jpg'
-              }
 
-              style={{ marginLeft: "10px", width: "50px", borderRadius: '47%' }}
+            <Link to={'/'}>
+              <img
+                src={'/1.jpg'}
+                alt="logo"
+                style={{
+                  marginLeft: '10px',
+                  marginTop: '6px',
 
-              alt="logo of sitemark"
-            />
+                  width: '50px',
+                  borderRadius: '47%',
+
+                }}
+              />
+            </Link>
+
+
             <Box sx={{ display: { xs: 'none', md: 'flex', gap: 10 } }}>
 
 
@@ -248,61 +256,61 @@ function Navbar() {
                 >
                   <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                 </Box>
-               
-              <MenuItem
-                component={Link}
-                to="/allpost"
-                sx={{ py: '6px', px: '12px', borderRadius: 20 }}
 
-              >
-                <Typography variant="body2" color="text.primary">
-                  All Post
-                </Typography>
-              </MenuItem>
-
-              {isLoggedIn && (
                 <MenuItem
                   component={Link}
-                  to='/userpost'
-                  onClick={() => scrollToSection('pricing')}
+                  to="/allpost"
                   sx={{ py: '6px', px: '12px', borderRadius: 20 }}
 
                 >
                   <Typography variant="body2" color="text.primary">
-                    Posts
+                    All Post
                   </Typography>
                 </MenuItem>
-              )}
-              {isLoggedIn && (
+
+                {isLoggedIn && (
+                  <MenuItem
+                    component={Link}
+                    to='/userpost'
+                    onClick={() => scrollToSection('pricing')}
+                    sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Posts
+                    </Typography>
+                  </MenuItem>
+                )}
+                {isLoggedIn && (
+                  <MenuItem
+                    component={Link}
+                    to="/addpost"
+                    sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Add Post
+                    </Typography>
+                  </MenuItem>
+                )}
+                {isLoggedIn && (
+                  <MenuItem
+                    component={Link}
+                    to="/profile"
+                    sx={{ py: '6px', px: '12px', borderRadius: 20 }}
+                  >
+                    <Typography variant="body2" color="text.primary">
+                      Profile
+                    </Typography>
+                  </MenuItem>
+                )}
                 <MenuItem
-                  component={Link}
-                  to="/addpost"
+                  onClick={() => scrollToSection('faq')}
                   sx={{ py: '6px', px: '12px', borderRadius: 20 }}
                 >
                   <Typography variant="body2" color="text.primary">
-                    Add Post
+                    FAQ
                   </Typography>
                 </MenuItem>
-              )}
-              {isLoggedIn && (
-                <MenuItem
-                  component={Link}
-                  to="/profile"
-                  sx={{ py: '6px', px: '12px', borderRadius: 20 }}
-                >
-                  <Typography variant="body2" color="text.primary">
-                    Profile
-                  </Typography>
-                </MenuItem>
-              )}
-                 <MenuItem
-                onClick={() => scrollToSection('faq')}
-                sx={{ py: '6px', px: '12px', borderRadius: 20 }}
-              >
-                <Typography variant="body2" color="text.primary">
-                  FAQ
-                </Typography>
-              </MenuItem>
                 <Divider />
                 {isLoggedIn ? (
                   <MenuItem>

@@ -45,9 +45,9 @@ const EditPost = () => {
         // Fetch post data when component mounts
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/singlepost/${postid}`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`,{withCredentials:true});
                 setPost(response.data);
-                
+                console.log(response)
                 setInitialValues({
                     title: response.data.title || '',
                     content: response.data.content || '',
@@ -65,17 +65,6 @@ const EditPost = () => {
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setLoading(true);
 
-        const accessToken = cookies.accessToken;
-        let userId = '';
-        const decodedToken = decodeToken(accessToken); // Use the utility function to decode the token
-
-        if (decodedToken) {
-            userId = decodedToken._id;
-        } else {
-            setLoading(false);
-            setSubmitting(false);
-            return;
-        }
 
         const formData = new FormData();
         if (values.title) {
@@ -91,7 +80,7 @@ const EditPost = () => {
         formData.append('postId', postid);
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData);
+            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData, { withCredentials: true });
             if (response.data.message === "Post updated successfully") {
                 toast.success(response.data.message);
                 navigate('/userpost');
