@@ -60,16 +60,14 @@ const PostsList = () => {
   const { mode } = useTheme(); // Access the current theme mode (light or dark)
 
   const fetchData = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/allpost`);
       setData(response.data);
-
     } catch (error) {
       console.log(error);
-
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -81,9 +79,9 @@ const PostsList = () => {
     <>
       <StarryBackground />
       <Container sx={{ marginTop: 15 }}>
-        <Grid container spacing={2}> {/* Add spacing between the grid items */}
-          {loading ? (
-            Array.from({ length: 4 }).map((_, index) => ( // Show 4 skeleton loaders
+        {loading ? (
+          <Grid container spacing={2}>
+            {Array.from({ length: 4 }).map((_, index) => ( // Show 4 skeleton loaders
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <StyledCard>
                   <PostCard>
@@ -97,9 +95,15 @@ const PostsList = () => {
                   </PostCard>
                 </StyledCard>
               </Grid>
-            ))
-          ) : (
-            data.map((post, index) => (
+            ))}
+          </Grid>
+        ) : data.length === 0 ? (
+          <Typography variant="h6" align="center" sx={{ mt: 4 }}>
+            No posts available
+          </Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {data.map((post, index) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                 <Link to={`/post/${post._id}`} style={{ textDecoration: 'none' }}>
                   <StyledCard>
@@ -156,9 +160,9 @@ const PostsList = () => {
                   </StyledCard>
                 </Link>
               </Grid>
-            ))
-          )}
-        </Grid>
+            ))}
+          </Grid>
+        )}
       </Container>
     </>
   );

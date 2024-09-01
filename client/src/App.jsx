@@ -17,13 +17,22 @@ import EditPost from './components/allpost/EditPost';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/home/Home'
 import Footer from './components/Footer';
+import { Box } from '@mui/material';
 // Layout Component with Navbar
 const Layout = () => (
-  <>
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+    }}
+  >
     <Navbar />
-    <Outlet /> {/* Renders the matched route's component */}
+    <Box sx={{ flex: 1 }}>
+      <Outlet /> {/* Renders the matched route's component */}
+    </Box>
     <Footer />
-  </>
+  </Box>
 );
 
 const App = () => {
