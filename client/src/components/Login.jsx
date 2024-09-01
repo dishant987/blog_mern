@@ -69,7 +69,7 @@ export default function Login() {
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signin`, values,{withCredentials:true});
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signin`, values);
       if (response.data.statuscode === 200 && response.data.message === "Login SuccessFully") {
         toast.success(response.data.message);
         const expires = new Date();
