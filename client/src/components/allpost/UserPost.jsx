@@ -95,7 +95,7 @@ const UserPost = () => {
                 data: { postId, frontImage },
                 withCredentials: true
             });
-         
+
             if (response.data.message === "Post deleted successfully") {
                 toast.success(response.data.message);
                 setData(data.filter(post => post._id !== postId));
@@ -141,7 +141,7 @@ const UserPost = () => {
                             </Typography>
                         ) : (
                             data.map((post, index) => (
-                                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={post._id}>
                                     <StyledCard>
                                         <PostCard>
                                             <Box
