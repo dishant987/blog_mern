@@ -72,10 +72,9 @@ export default function Login() {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signin`, values);
       if (response.data.statuscode === 200 && response.data.message === "Login SuccessFully") {
         toast.success(response.data.message);
-
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
-        setCookie('accessToken', response.data.accessToken, { path: '/', expires, sameSite: 'None', secure: true });
+        setCookie('accessToken', response.data.accessToken, { path: '/', expires, sameSite: 'none', secure: true });
         navigate('/profile');
       }
     } catch (error) {
