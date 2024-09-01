@@ -65,9 +65,9 @@ const App = () => {
         },
         {
           path: "/verifyemail",
-          element: <ProtectedRoute>
+          element:
             <VerifyEmail />
-          </ProtectedRoute>,
+       
         },
         {
           path: "/addpost",
