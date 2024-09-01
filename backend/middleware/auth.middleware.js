@@ -6,7 +6,7 @@ export const verifyJWT = async (req, res, next) => {
     const token =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
-
+    console.log("token : ", token);
     if (!token) {
       return res.json({
         statuscode: 401,

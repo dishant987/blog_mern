@@ -161,13 +161,9 @@ export async function userLogout(req, res) {
     secure: true,
   };
 
-  return res
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .status(200)
-    .json({
-      message: "User Logged Out",
-    });
+  return res.clearCookie("accessToken", options).status(200).json({
+    message: "User Logged Out",
+  });
 }
 
 export async function verifyEmail(req, res) {
