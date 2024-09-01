@@ -80,6 +80,7 @@ const UserPost = () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`, { withCredentials: true });
             setData(response.data);
+            console.log(response)
         } catch (error) {
             console.log(error);
         } finally {
