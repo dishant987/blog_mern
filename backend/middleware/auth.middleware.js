@@ -8,7 +8,7 @@ export const verifyJWT = async (req, res, next) => {
       req.header("Authorization")?.replace("Bearer ", "");
     console.log("token : ", token);
     if (!token) {
-      return res.json({
+      return res.status(401).json({
         statuscode: 401,
         message: "Unauthorized request",
       });
@@ -18,7 +18,7 @@ export const verifyJWT = async (req, res, next) => {
     // console.log(decodedToken);
     const user = await User.findById(decodedToken._id).select("-password ");
     if (!user) {
-      return res.json({
+      return res.status(401).json({
         statuscode: 401,
         message: "Invalid Access Token",
       });
@@ -27,10 +27,10 @@ export const verifyJWT = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error(error);
-    res.json({
+    console.error("JWT verification error:", error);
+    res.status(500).json({
       statuscode: 500,
-      message: error?.message || "Invalid Access Token",
+      message: error.message || "Invalid Access Token",
     });
   }
 };
