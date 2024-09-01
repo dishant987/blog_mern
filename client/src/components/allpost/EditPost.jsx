@@ -45,9 +45,9 @@ const EditPost = () => {
         // Fetch post data when component mounts
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`,{withCredentials:true});
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`, { withCredentials: true });
                 setPost(response.data);
-               
+
                 setInitialValues({
                     title: response.data.title || '',
                     content: response.data.content || '',

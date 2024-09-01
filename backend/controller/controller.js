@@ -1,11 +1,6 @@
 import { sendEmail } from "../helper/mailer.js";
-import jwt from "jsonwebtoken";
 import { User } from "../models/user.js";
-import mongoose from "mongoose";
-import multer from "multer";
-import cloudinary from "../helper/cloudinary.js";
 import post from "../models/post.js";
-import { v4 as uuid } from "uuid";
 import {
   deleteFileFromCloudinary,
   uploadFileToCloudinary,
@@ -281,7 +276,13 @@ export async function editUserPost(req, res) {
   try {
     const { title, content, postId, oldimageurl } = req.body;
     const { file } = req;
-
+    console.log("Received data:", {
+      title,
+      content,
+      postId,
+      oldimageurl,
+      file,
+    });
     // Check for required fields
     if (!postId || (!title && !content)) {
       return res
