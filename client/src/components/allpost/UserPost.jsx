@@ -98,7 +98,7 @@ const UserPost = () => {
             return '';
         }
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`, { withCredentials: true });
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`);
             if (Array.isArray(response.data)) {
                 setData(response.data);
             } else {

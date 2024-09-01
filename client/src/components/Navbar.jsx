@@ -43,7 +43,7 @@ function Navbar() {
   const handleSignOut = async () => {
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/logout`, {}, { withCredentials: true });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/logout`, {});
       console.log(response)
       if (response.status === 200 && response.data.message === "User Logged Out") {
         toast.success(response.data.message);

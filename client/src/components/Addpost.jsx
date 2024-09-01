@@ -54,9 +54,7 @@ const AddPostForm = () => {
         formData.append('userId', userId); // Append user ID to form data
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/addpost`, formData, {
-                withCredentials: true
-            });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/addpost`, formData);
             if (response.data.message == "Post added successfully") {
                 toast.success(response.data.message)
                 resetForm();

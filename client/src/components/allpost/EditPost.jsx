@@ -80,7 +80,7 @@ const EditPost = () => {
         formData.append('postId', postid);
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData, { withCredentials: true });
+            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData);
             if (response.data.message === "Post updated successfully") {
                 toast.success(response.data.message);
                 navigate('/userpost');

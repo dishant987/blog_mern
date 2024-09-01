@@ -6,19 +6,15 @@ const router = Router();
 
 router.route("/users/signup").post(controller.signUp);
 router.route("/users/signin").post(controller.signIn);
-router.route("/users/logout").post(verifyJWT, controller.userLogout);
+router.route("/users/logout").post(controller.userLogout);
 router.route("/verifymail").post(controller.verifyEmail);
-router
-  .route("/addpost")
-  .post(verifyJWT, upload.single("file"), controller.addPost);
+router.route("/addpost").post(upload.single("file"), controller.addPost);
 router.route("/allpost").get(controller.AllPost);
-router.route("/singlepost/:id").get( controller.SinglePost);
-router
-  .route("/singleuserpost/:userid")
-  .get(verifyJWT, controller.SingleUserPost);
-router.route("/deletepost").delete(verifyJWT, controller.deletePost);
+router.route("/singlepost/:id").get(controller.SinglePost);
+router.route("/singleuserpost/:userid").get(controller.SingleUserPost);
+router.route("/deletepost").delete(controller.deletePost);
 router
   .route("/edituserpost")
-  .put(verifyJWT, upload.single("file"), controller.editUserPost);
+  .put(upload.single("file"), controller.editUserPost);
 
 export default router;
