@@ -45,7 +45,7 @@ const EditPost = () => {
         // Fetch post data when component mounts
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`, { withCredentials: true });
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singlepost/${postid}`);
                 setPost(response.data);
 
                 setInitialValues({
@@ -80,7 +80,7 @@ const EditPost = () => {
         formData.append('postId', postid);
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/edituserpost`, formData);
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URI}/api/edituserpost`, formData);
             if (response.data.message === "Post updated successfully") {
                 toast.success(response.data.message);
                 navigate('/userpost');
