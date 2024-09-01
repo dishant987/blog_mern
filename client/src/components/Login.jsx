@@ -75,7 +75,7 @@ export default function Login() {
 
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
-        setCookie('accessToken', response.data.accessToken, { path: '/', expires });
+        setCookie('accessToken', response.data.accessToken, { path: '/', expires, sameSite: 'None', secure: true });
         navigate('/profile');
       }
     } catch (error) {
