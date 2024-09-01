@@ -1,7 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import cors from "cors";
-
+import cron from "node-cron";
 import cookieParser from "cookie-parser";
 import router from "./router/route.js";
 import connect from "./database/conn.js";
@@ -43,7 +43,12 @@ app.get("/", (req, res) => {
   res.json("Get Request");
 });
 
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send("Internal Server Error");
-// });
+
+cron.schedule("* * * * *", () => {
+  console.log("Cron job running every minute");
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Internal Server Error");
+});
