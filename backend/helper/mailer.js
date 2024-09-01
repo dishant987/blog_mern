@@ -55,7 +55,7 @@ export const sendEmail = async ({ email, emailType, userId }) => {
               </a>
             </p>
             <p style="font-size: 16px; color: #555;">If you did not sign up for this account, please ignore this email.</p>
-            <p style="font-size: 16px; color: #555;">Best regards,<br>Your Company Name</p>
+            <p style="font-size: 16px; color: #555;">Best regards,<br>Dishant😊 </p>
           </div>
         `,
       };

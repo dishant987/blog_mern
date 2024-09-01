@@ -67,7 +67,16 @@ export const signUp = async (req, res) => {
       });
     }
     // console.log(user);
-    await sendEmail({ email, emailType: "VERIFY", userId: user._id });
+    try {
+      await sendEmail({ email, emailType: "VERIFY", userId: user._id });
+    } catch (emailError) {
+      await User.findByIdAndDelete(user._id); // Rollback user creation if email fails
+      return res.status(500).json({
+        statuscode: 500,
+        message:
+          "Failed to send verification email. Please use a valid email address.",
+      });
+    }
 
     res.status(201).json({
       statuscode: 201,
