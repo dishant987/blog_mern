@@ -5,16 +5,13 @@ import { User } from "../models/user.js";
 export const sendEmail = async ({ email, emailType, userId }) => {
   try {
     if (emailType === "VERIFY") {
-      // Create a hashed token
       const hashedToken = await bcrypt.hash(userId.toString(), 10);
 
-      // Update user with the verification token and expiry
       await User.findByIdAndUpdate(userId, {
         verifyToken: hashedToken,
-        verifyTokenExpiry: Date.now() + 3600000, // 1 hour in milliseconds
+        verifyTokenExpiry: Date.now() + 3600000,
       });
 
-      // Set up the email transporter
       let transport = nodemailer.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",
@@ -26,10 +23,8 @@ export const sendEmail = async ({ email, emailType, userId }) => {
         },
       });
 
-      // Generate the verification link
       const verificationLink = `${process.env.DOMAIN}/verifyemail?token=${hashedToken}`;
 
-      // Set up the email options with styled HTML
       const mailOptions = {
         from: process.env.MAIL_USER,
         to: email,
@@ -60,12 +55,12 @@ export const sendEmail = async ({ email, emailType, userId }) => {
         `,
       };
 
-      // Send the email
       const mailresponse = await transport.sendMail(mailOptions);
 
       return mailresponse;
     }
   } catch (error) {
     console.log(error);
+    throw new Error('Email sending failed');
   }
 };

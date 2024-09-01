@@ -26,68 +26,74 @@ export const signUp = async (req, res) => {
     const { username, email, password, gender } = req.body;
 
     if (!password) {
-      return res.json({
-        statuscode: 400,
-        message: " password is required",
-      });
+      return res
+        .status(400)
+        .json({ statuscode: 400, message: "Password is required" });
     }
     if (!email) {
-      return res.json({
-        statuscode: 400,
-        message: "email is required",
-      });
+      return res
+        .status(400)
+        .json({ statuscode: 400, message: "Email is required" });
     }
     if (!username) {
-      return res.json({
-        statuscode: 400,
-        message: "username is required",
-      });
+      return res
+        .status(400)
+        .json({ statuscode: 400, message: "Username is required" });
     }
-    const existedUser = await User.findOne({
-      $or: [{ username }, { email }],
-    });
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ statuscode: 400, message: "Invalid email format" });
+    }
+
+    const existedUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existedUser) {
-      return res.status(409).json({
-        statuscode: 409,
-        message: "User with email or username already exists",
-      });
+      return res
+        .status(409)
+        .json({
+          statuscode: 409,
+          message: "User with email or username already exists",
+        });
     }
 
     const user = await User.create({
-      username: username,
-      email: email,
-      password: password,
+      username,
+      email,
+      password,
       gender: gender.toLowerCase(),
     });
 
     if (!user) {
-      res.status(500).json({
-        statuscode: 500,
-        message: "Something went wrong while registering the user",
-      });
-    }
-    // console.log(user);
-    try {
-      await sendEmail({ email, emailType: "VERIFY", userId: user._id });
-    } catch (emailError) {
-      await User.findByIdAndDelete(user._id); // Rollback user creation if email fails
-      return res.status(500).json({
-        statuscode: 500,
-        message:
-          "Failed to send verification email. Please use a valid email address.",
-      });
+      return res
+        .status(500)
+        .json({
+          statuscode: 500,
+          message: "Something went wrong while registering the user",
+        });
     }
 
-    res.status(201).json({
-      statuscode: 201,
-      message: "Email sent Successfully and Verify your mail for login",
-    });
+    try {
+      await sendEmail({ email, emailType: "VERIFY", userId: user._id });
+      return res
+        .status(201)
+        .json({
+          statuscode: 201,
+          message: "Email sent successfully. Verify your email for login.",
+        });
+    } catch (emailError) {
+      return res
+        .status(500)
+        .json({
+          statuscode: 500,
+          message: "Failed to send verification email. Please try again later.",
+        });
+    }
   } catch (error) {
     console.log(error);
-    res.json({
-      statuscode: 500,
-      message: error.message,
-    });
+    return res.status(500).json({ statuscode: 500, message: error.message });
   }
 };
 

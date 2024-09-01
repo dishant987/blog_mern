@@ -64,22 +64,25 @@ export default function SignUp() {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/api/users/signup`, values);
-      if (response.status === 201 && response.data.message === 'Email sent Successfully and Verify your mail for login') {
+      if (response.status === 201 && response.data.message === 'Email sent successfully. Verify your email for login.') {
         toast.success(response.data.message);
         navigate('/login');
       }
     } catch (error) {
-      if (error.response.status === 500 && error.response.data.message === 'Something went wrong while registering the user') {
-        return toast.error(error.response.data.message);
+      if (error.response && error.response.status === 400 && error.response.data.message === 'Invalid email format') {
+        toast.error('Please provide a valid email address.');
+      } else if (error.response && error.response.status === 500 && error.response.data.message === 'Failed to send verification email. Please try again later.') {
+        toast.error('Failed to send verification email. Please try again later.');
+      } else if (error.response && error.response.status === 409 && error.response.data.message === 'User with email or username already exists') {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Something went wrong, try again later.');
       }
-      if (error.response.status === 409 && error.response.data.message === 'User with email or username already exists') {
-        return toast.error(error.response.data.message);
-      }
-      return toast.error('Something went wrong, try again later.');
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <>
