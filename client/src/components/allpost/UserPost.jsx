@@ -68,6 +68,26 @@ const UserPost = () => {
     const { mode } = useTheme();
     const [cookies] = useCookies(['accessToken']);
 
+    // const fetchData = async () => {
+    //     const accessToken = cookies.accessToken;
+    //     const decodedToken = decodeToken(accessToken);
+    //     let userId = ''
+    //     if (decodedToken) {
+    //         userId = decodedToken._id;
+    //     } else {
+    //         return '';
+    //     }
+    //     try {
+    //         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`, { withCredentials: true });
+    //         setData(response.data);
+    //         console.log(response)
+    //     } catch (error) {
+    //         console.log(error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const fetchData = async () => {
         const accessToken = cookies.accessToken;
         const decodedToken = decodeToken(accessToken);
@@ -79,14 +99,19 @@ const UserPost = () => {
         }
         try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/api/singleuserpost/${userId}`, { withCredentials: true });
-            setData(response.data);
-            console.log(response)
+            if (Array.isArray(response.data)) {
+                setData(response.data);
+            } else {
+                setData([]);  // Or handle it differently based on your needs
+            }
         } catch (error) {
             console.log(error);
+            setData([]);  // Handle error by setting data to an empty array
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleDelete = async (postId, frontImage) => {
         setLoading(true);
@@ -135,12 +160,12 @@ const UserPost = () => {
                             </Grid>
                         ))
                     ) : (
-                        data.length === 0 ? (
+                        Array.isArray(data) && data.length === 0 ? (
                             <Typography variant="h6" component="div" sx={{ textAlign: 'center', width: '100%' }}>
                                 No posts available
                             </Typography>
                         ) : (
-                            data.map((post, index) => (
+                            Array.isArray(data) && data.map((post, index) => (
                                 <Grid item xs={12} sm={6} md={4} lg={3} key={post._id}>
                                     <StyledCard>
                                         <PostCard>
