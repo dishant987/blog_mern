@@ -156,14 +156,6 @@ export const signIn = async (req, res) => {
 
 //logout
 export async function userLogout(req, res) {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $set: { refreshToken: null },
-    },
-    { new: true }
-  );
-
   const options = {
     httpOnly: true,
     secure: true,
@@ -172,8 +164,8 @@ export async function userLogout(req, res) {
   return res
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
+    .status(200)
     .json({
-      statuscode: 200,
       message: "User Logged Out",
     });
 }

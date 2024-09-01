@@ -43,7 +43,6 @@ app.get("/", (req, res) => {
   res.json("Get Request");
 });
 
-
 cron.schedule("* * * * *", () => {
   console.log("Cron job running every minute");
 });
