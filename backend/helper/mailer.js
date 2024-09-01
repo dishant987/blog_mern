@@ -56,11 +56,14 @@ export const sendEmail = async ({ email, emailType, userId }) => {
       };
 
       const mailresponse = await transport.sendMail(mailOptions);
-
+   
       return mailresponse;
     }
   } catch (error) {
+    if (error.response && error.response.code === "ENOTFOUND") {
+      throw new Error("Invalid email domain");
+    }
     console.log(error);
-    throw new Error('Email sending failed');
+    throw new Error("Email sending failed");
   }
 };

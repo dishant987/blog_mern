@@ -5,6 +5,7 @@ import {
   deleteFileFromCloudinary,
   uploadFileToCloudinary,
 } from "../helper/funccloud.js";
+import validator from "validator";
 
 const generateAccessTokenAndRefereshToken = async function (userId, res) {
   try {
@@ -42,8 +43,8 @@ export const signUp = async (req, res) => {
     }
 
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+
+    if (!validator.isEmail(email)) {
       return res
         .status(400)
         .json({ statuscode: 400, message: "Invalid email format" });
@@ -51,12 +52,10 @@ export const signUp = async (req, res) => {
 
     const existedUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existedUser) {
-      return res
-        .status(409)
-        .json({
-          statuscode: 409,
-          message: "User with email or username already exists",
-        });
+      return res.status(409).json({
+        statuscode: 409,
+        message: "User with email or username already exists",
+      });
     }
 
     const user = await User.create({
@@ -67,29 +66,23 @@ export const signUp = async (req, res) => {
     });
 
     if (!user) {
-      return res
-        .status(500)
-        .json({
-          statuscode: 500,
-          message: "Something went wrong while registering the user",
-        });
+      return res.status(500).json({
+        statuscode: 500,
+        message: "Something went wrong while registering the user",
+      });
     }
 
     try {
       await sendEmail({ email, emailType: "VERIFY", userId: user._id });
-      return res
-        .status(201)
-        .json({
-          statuscode: 201,
-          message: "Email sent successfully. Verify your email for login.",
-        });
+      return res.status(201).json({
+        statuscode: 201,
+        message: "Email sent successfully. Verify your email for login.",
+      });
     } catch (emailError) {
-      return res
-        .status(500)
-        .json({
-          statuscode: 500,
-          message: "Failed to send verification email. Please try again later.",
-        });
+      return res.status(500).json({
+        statuscode: 500,
+        message: "Failed to send verification email. Please try again later.",
+      });
     }
   } catch (error) {
     console.log(error);
