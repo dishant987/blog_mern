@@ -74,7 +74,7 @@ export default function Login() {
         toast.success(response.data.message);
         const expires = new Date();
         expires.setDate(expires.getDate() + 1);
-        setCookie('accessToken', response.data.accessToken, { path: '/', expires, sameSite: 'none', secure: true });
+        setCookie('accessToken', response.data.accessToken, { path: '/', expires, sameSite: 'strict', secure: true });
         navigate('/profile');
       }
     } catch (error) {
