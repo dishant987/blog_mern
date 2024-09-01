@@ -43,7 +43,7 @@ const PostCard = styled(Box)(({ theme }) => ({
 const ContentBox = styled(Box)(({ mode }) => ({
     padding: '16px',
     flex: 1,
-    backgroundColor: mode === 'dark' ? 'rgba(51, 51, 51, 0.6)' : 'rgba(245, 245, 245, 0.6)', // Semi-transparent background for glass effect
+    backgroundColor: mode === 'dark' ? 'rgba(51, 51, 51, 0.6)' : 'rgba(245, 245, 245, 0.6)',
     color: mode === 'dark' ? '#fff' : '#000',
     backdropFilter: 'blur(10px)',
     transition: 'background-color 0.4s ease-in-out, backdrop-filter 0.4s ease-in-out',
@@ -59,18 +59,18 @@ const IconGroup = styled(Box)(({ theme }) => ({
     position: 'absolute',
     bottom: '8px',
     right: '8px',
-    gap: '8px', // Space between icons
+    gap: '8px',
 }));
 
 const UserPost = () => {
     const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true); // Added loading state
-    const { mode } = useTheme(); // Access the current theme mode (light or dark)
+    const [loading, setLoading] = useState(true);
+    const { mode } = useTheme();
     const [cookies] = useCookies(['accessToken']);
 
     const fetchData = async () => {
         const accessToken = cookies.accessToken;
-        const decodedToken = decodeToken(accessToken); // Use the utility function to decode the token
+        const decodedToken = decodeToken(accessToken);
         let userId = ''
         if (decodedToken) {
             userId = decodedToken._id;
@@ -83,7 +83,7 @@ const UserPost = () => {
         } catch (error) {
             console.log(error);
         } finally {
-            setLoading(false); // Set loading to false after data fetch
+            setLoading(false);
         }
     };
 
@@ -114,7 +114,7 @@ const UserPost = () => {
         <>
             <StarryBackground />
             <Container sx={{ marginTop: 15 }}>
-                <Grid container spacing={2}> {/* Add spacing between the grid items */}
+                <Grid container spacing={2}>
                     {loading ? (
                         Array.from(new Array(4)).map((_, index) => (
                             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -134,67 +134,73 @@ const UserPost = () => {
                             </Grid>
                         ))
                     ) : (
-                        data.map((post, index) => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={index}> {/* Updated for 4 cards in a row */}
-                                <StyledCard>
-                                    <PostCard>
-                                        <Box
-                                            component="img"
-                                            src={post.frontImage}
-                                            alt={post.title}
-                                            sx={{
-                                                height: '180px',
-                                                width: '100%',
-                                                objectFit: 'cover',
-                                                borderRadius: '8px 8px 0 0', // Only round top corners
-                                            }}
-                                        />
-                                        <ContentBox mode={mode}>
-                                            <Typography
-                                                variant="h6"
-                                                component="div"
+                        data.length === 0 ? (
+                            <Typography variant="h6" component="div" sx={{ textAlign: 'center', width: '100%' }}>
+                                No posts available
+                            </Typography>
+                        ) : (
+                            data.map((post, index) => (
+                                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                                    <StyledCard>
+                                        <PostCard>
+                                            <Box
+                                                component="img"
+                                                src={post.frontImage}
+                                                alt={post.title}
                                                 sx={{
-                                                    color: mode === 'dark' ? '#fff' : '#000',
-                                                    textDecoration: 'none',
-                                                    fontWeight: 'bold', // Make title bold
+                                                    height: '180px',
+                                                    width: '100%',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '8px 8px 0 0',
                                                 }}
-                                            >
-                                                {post.title}
-                                            </Typography>
-                                            <Typography
-                                                variant="caption"
-                                                sx={{
-                                                    color: mode === 'dark' ? '#bbb' : '#666',
-                                                    marginTop: '8px',
-                                                    display: 'block', // Ensure the timestamp is on a new line
-                                                }}
-                                            >
-                                                {moment(post.createdAt).fromNow()}
-                                            </Typography>
-                                        </ContentBox>
-                                        <IconGroup>
-                                            <Tooltip title="Edit">
-                                                <IconButton
-                                                    component={Link}
-                                                    to={`/editpost/${post._id}`}
-                                                    color="primary"
+                                            />
+                                            <ContentBox mode={mode}>
+                                                <Typography
+                                                    variant="h6"
+                                                    component="div"
+                                                    sx={{
+                                                        color: mode === 'dark' ? '#fff' : '#000',
+                                                        textDecoration: 'none',
+                                                        fontWeight: 'bold',
+                                                    }}
                                                 >
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Delete">
-                                                <IconButton
-                                                    color="secondary"
-                                                    onClick={() => handleDelete(post._id, post.frontImage)}
+                                                    {post.title}
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{
+                                                        color: mode === 'dark' ? '#bbb' : '#666',
+                                                        marginTop: '8px',
+                                                        display: 'block',
+                                                    }}
                                                 >
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </IconGroup>
-                                    </PostCard>
-                                </StyledCard>
-                            </Grid>
-                        ))
+                                                    {moment(post.createdAt).fromNow()}
+                                                </Typography>
+                                            </ContentBox>
+                                            <IconGroup>
+                                                <Tooltip title="Edit">
+                                                    <IconButton
+                                                        component={Link}
+                                                        to={`/editpost/${post._id}`}
+                                                        color="primary"
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Delete">
+                                                    <IconButton
+                                                        color="secondary"
+                                                        onClick={() => handleDelete(post._id, post.frontImage)}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </IconGroup>
+                                        </PostCard>
+                                    </StyledCard>
+                                </Grid>
+                            ))
+                        )
                     )}
                 </Grid>
             </Container>
