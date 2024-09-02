@@ -32,13 +32,13 @@ export default function VerifyEmail() {
     }
   };
 
-  // useEffect(() => {
-  //   const urlToken = window.location.search.split("=")[1];
-  //   if (!urlToken) {
-  //     navigate('/login');
-  //   }
-  //   setToken(urlToken || "");
-  // }, []);
+  useEffect(() => {
+    const urlToken = window.location.search.split("=")[1];
+   if (!urlToken) {
+       navigate('/login');
+    }
+   setToken(urlToken || "");
+  }, []);
 
   useEffect(() => {
     if (token.length > 0) {
