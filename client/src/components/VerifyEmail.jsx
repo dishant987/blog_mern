@@ -34,17 +34,10 @@ export default function VerifyEmail() {
 
   useEffect(() => {
     const urlToken = window.location.search.split("=")[1];
-<<<<<<< HEAD
     if (!urlToken) {
       navigate('/login');
     }
     setToken(urlToken || "");
-=======
-   if (!urlToken) {
-       navigate('/login');
-    }
-   setToken(urlToken || "");
->>>>>>> acb6cab2e23d05a9ea05094f8492a6c932c78054
   }, []);
 
   useEffect(() => {
